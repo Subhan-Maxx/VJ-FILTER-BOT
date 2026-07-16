@@ -4,27 +4,18 @@
 
 FROM python:3.10-slim-bookworm
 
-# Prevent Python from writing .pyc files and enable unbuffered logs
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# सिस्टम पैकेजेस को अपडेट और गिट इंस्टॉल करना
+RUN apt update && apt upgrade -y && apt install git -y
 
-# Set working directory
+# वर्क डायरेक्टरी सेट करना
 WORKDIR /VJ-FILTER-BOT
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy requirements first for better Docker layer caching
+# आवश्यकताओं (requirements) को कॉपी और इंस्टॉल करना
 COPY requirements.txt .
+RUN pip3 install -U pip && pip3 install --no-cache-dir -U -r requirements.txt
 
-# Upgrade pip and install Python dependencies
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Copy project files
+# बाकी के प्रोजेक्ट कोड को कॉपी करना
 COPY . .
 
-# Start the bot
+# बॉट को स्टार्ट करने की कमांड
 CMD ["python", "bot.py"]
