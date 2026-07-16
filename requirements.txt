@@ -39,4 +39,4 @@ dnspython==2.3.0
 ffmpeg-python>=0.2.0
 openai==0.25.0
 SQLAlchemy==1.4.49
-cinemagoer==2023.05.03
+cinemagoer==2023.5.1
