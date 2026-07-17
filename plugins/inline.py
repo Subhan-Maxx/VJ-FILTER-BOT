@@ -112,7 +112,7 @@ async def answer(bot, query):
                 try:
                     results.append(
                         InlineQueryResultCachedDocument(
-                            id=file['file_id'],
+                            id=f"cached-{file['file_id']}-{len(results)}",  # Add unique identifier
                             title=title,
                             document_file_id=file['file_id'],
                             caption=f_caption,
@@ -120,7 +120,8 @@ async def answer(bot, query):
                             reply_markup=reply_markup,
                         )
                     )
-                except Exception:
+                except Exception as e:
+                    logger.exception(f"Error creating cached document: {e}")
                     # fallback to article if something goes wrong
                     input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
                     btn = InlineKeyboardMarkup(
@@ -128,13 +129,14 @@ async def answer(bot, query):
                     )
                     results.append(
                         InlineQueryResultArticle(
-                            id=f"fallback-{file['file_id']}",
+                            id=f"fallback-{file['file_id']}-{len(results)}",
                             title=title,
                             input_message_content=input_content,
                             description=f"Size: {size}",
                             reply_markup=btn,
                         )
                     )
+                    
             else:
                 # Non-premium + unverified in PM: show verification article with Verify button
                 try:
