@@ -2746,6 +2746,12 @@ async def auto_filter(client, name, msg, reply_msg, ai_search, spoll=False):
             await message.delete()
 
 async def advantage_spell_chok(client, name, msg, reply_msg, vj_search):
+    if msg.text and ("📥 Click below to receive this file in PM" in msg.text or "🎬" in msg.text or "Verification required" in msg.text):
+        try:
+            await reply_msg.delete()  # "Searching..." ya status wale message ko clear karne ke liye
+        except:
+            pass
+        return
     mv_id = msg.id
     mv_rqst = name
     reqstr1 = msg.from_user.id if msg.from_user else 0
