@@ -3,6 +3,7 @@
 # Ask Doubt on telegram @KingVJ01
 
 import logging
+import uuid # unique ID generation ke liye import kiya
 from pyrogram import Client, emoji, filters
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 from pyrogram.types import (
@@ -72,7 +73,7 @@ async def answer(bot, query):
         chat_id, string, file_type=file_type, max_results=10, offset=offset
     )
 
-    for file in files:
+    for index, file in enumerate(files):
         title = file['file_name']
         size = get_size(file['file_size'])
         f_caption = file.get('caption') or file['file_name']
@@ -97,22 +98,23 @@ async def answer(bot, query):
             is_premium = False
         if not is_premium:
             try:
-                # check_verification may be a function that checks if user passed verification
                 verified = await check_verification(bot, user_id)
             except Exception:
                 verified = False
 
-        # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
         chat_type = (query.chat_type.value if query.chat_type else '').lower()
         is_private_inline = chat_type in ('private', 'sender')
 
+        # FIX: Telegram API limits 'id' parameters to max 64 bytes without invalid characters.
+        # file_id ke badle hum unique numeric index or hex generator use karenge.
+        unique_id = f"doc_{index}_{offset}_{user_id}" 
+
         if is_private_inline:
-            # In private inline: premium or verified users get direct cached document
             if is_premium or verified:
                 try:
                     results.append(
                         InlineQueryResultCachedDocument(
-                            id=file['file_id'],
+                            id=unique_id, # FIX: Short and valid unique ID
                             title=title,
                             document_file_id=file['file_id'],
                             caption=f_caption,
@@ -120,15 +122,15 @@ async def answer(bot, query):
                             reply_markup=reply_markup,
                         )
                     )
-                except Exception:
-                    # fallback to article if something goes wrong
+                except Exception as e:
+                    logger.error(f"Failed to append Cached Document: {e}")
                     input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
                     btn = InlineKeyboardMarkup(
                         [[InlineKeyboardButton("Open PM", url=f"https://t.me/{temp.U_NAME}")]]
                     )
                     results.append(
                         InlineQueryResultArticle(
-                            id=f"fallback-{file['file_id']}",
+                            id=f"fallback-{unique_id}",
                             title=title,
                             input_message_content=input_content,
                             description=f"Size: {size}",
@@ -136,9 +138,7 @@ async def answer(bot, query):
                         )
                     )
             else:
-                # Non-premium + unverified in PM: show verification article with Verify button
                 try:
-                    # get_token integrates with existing verification flow and returns a URL
                     verify_url = await get_token(bot, user_id, f"https://t.me/{temp.U_NAME}?start=")
                 except Exception:
                     verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
@@ -149,7 +149,7 @@ async def answer(bot, query):
                 btn = InlineKeyboardMarkup([[InlineKeyboardButton("Verify", url=verify_url)]])
                 results.append(
                     InlineQueryResultArticle(
-                        id=f"verify-{file['file_id']}",
+                        id=f"verify-{unique_id}",
                         title=f"{title} — Verify to get file",
                         input_message_content=input_content,
                         description=f"Size: {size}",
@@ -157,7 +157,6 @@ async def answer(bot, query):
                     )
                 )
         else:
-            # Group/supergroup inline: always provide a message (article) that posts in group with a Get File button
             pm_link = f"https://t.me/{temp.U_NAME}?start=inline_{file['file_id']}"
             input_content = InputTextMessageContent(
                 f"🎬 {title}\n\n📥 Click below to receive this file in PM."
@@ -165,7 +164,7 @@ async def answer(bot, query):
             btn = InlineKeyboardMarkup([[InlineKeyboardButton("Get File", url=pm_link)]])
             results.append(
                 InlineQueryResultArticle(
-                    id=f"pm-{file['file_id']}",
+                    id=f"pm-{unique_id}",
                     title=f"{title} — Get in PM",
                     input_message_content=input_content,
                     description=f"Size: {size}",
