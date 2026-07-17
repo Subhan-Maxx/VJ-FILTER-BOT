@@ -49,14 +49,14 @@ async def start(client, message):
                 InlineKeyboardButton('ᴘʀᴇᴍɪᴜᴍ ᴀɴᴅ ʀᴇғᴇʀʀᴀʟ', callback_data='subscription')
             ],[
                 InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK),
-                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+                InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
             ]]
         else:
             buttons = [[
                 InlineKeyboardButton('sᴇᴀʀᴄʜ ʜᴇʀᴇ', switch_inline_query_current_chat='')
             ],[
                 InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK),
-                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+                InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
             ]]
         if CLONE_MODE == True:
             buttons.append([InlineKeyboardButton('ᴄʀᴇᴀᴛᴇ ᴏᴡɴ ᴄʟᴏɴᴇ ʙᴏᴛ', callback_data='clone')])
@@ -126,14 +126,14 @@ async def start(client, message):
                 InlineKeyboardButton('ᴘʀᴇᴍɪᴜᴍ ᴀɴᴅ ʀᴇғᴇʀʀᴀʟ', callback_data='subscription')
             ],[
                 InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK),
-                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+                InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
             ]]
         else:
             buttons = [[
                 InlineKeyboardButton('sᴇᴀʀᴄʜ ʜᴇʀᴇ', switch_inline_query_current_chat='')
             ],[
                 InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK),
-                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+                InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
             ]]
         if CLONE_MODE == True:
             buttons.append([InlineKeyboardButton('ᴄʀᴇᴀᴛᴇ ᴏᴡɴ ᴄʟᴏɴᴇ ʙᴏᴛ', callback_data='clone')])
@@ -171,14 +171,14 @@ async def start(client, message):
                     InlineKeyboardButton('Premium And Referral', callback_data='subscription')
                 ],[
                     InlineKeyboardButton('Update Channel', url=CHNL_LNK),
-                    InlineKeyboardButton('About', callback_data='about')
+                    InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
                 ]]
             else:
                 buttons = [[
                     InlineKeyboardButton('Search Here', switch_inline_query_current_chat='')
                 ],[
                     InlineKeyboardButton('Update Channel', url=CHNL_LNK),
-                    InlineKeyboardButton('About', callback_data='about')
+                    InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
                 ]]
             if CLONE_MODE == True:
                 buttons.append([InlineKeyboardButton('ᴄʀᴇᴀᴛᴇ ᴏᴡɴ ᴄʟᴏɴᴇ ʙᴏᴛ', callback_data='clone')])

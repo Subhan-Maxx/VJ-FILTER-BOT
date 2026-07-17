@@ -1832,14 +1832,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 InlineKeyboardButton('ᴘʀᴇᴍɪᴜᴍ ᴀɴᴅ ʀᴇғᴇʀʀᴀʟ', callback_data='subscription')
             ],[
                 InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK), 
-                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+                InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
             ]]
         else:
             buttons = [[
                 InlineKeyboardButton('sᴇᴀʀᴄʜ ʜᴇʀᴇ', switch_inline_query_current_chat='')
             ],[
                 InlineKeyboardButton('ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ', url=CHNL_LNK), 
-                InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+                InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help_b')
             ]]
         if CLONE_MODE == True:
             buttons.append([InlineKeyboardButton('ᴄʀᴇᴀᴛᴇ ᴏᴡɴ ᴄʟᴏɴᴇ ʙᴏᴛ', callback_data='clone')])
@@ -1944,11 +1944,33 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
+        
+        
+    elif query.data == "help_b":
+        buttons = [[
+             InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
+             InlineKeyboardButton('ᴀᴅᴍɪɴ', callback_data='help'),
+         ], [              
+             InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start'),
+             InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        await query.message.edit_text(
+            text=script.HELP2_TXT.format(query.from_user.mention),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+        
     elif query.data == "about":
         buttons = [[                
             InlineKeyboardButton('ᴀᴅᴍɪɴ', url="https://t.me/Lx0980BOT")
         ],[
-            InlineKeyboardButton('ʜᴏᴍᴇ', callback_data='start'),
+            InlineKeyboardButton('⇚Back', callback_data='help_b'),
             InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
         ]]
         await client.edit_message_media(
@@ -2040,7 +2062,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "admin":
         buttons = [[
-            InlineKeyboardButton('⟸ Bᴀᴄᴋ', callback_data='help'),
+            InlineKeyboardButton('⟸ Bᴀᴄᴋ', callback_data='help_b'),
             InlineKeyboardButton('ᴇxᴛʀᴀ', callback_data='extra')
         ]]
         await client.edit_message_media(
