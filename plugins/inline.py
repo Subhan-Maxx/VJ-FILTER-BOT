@@ -97,7 +97,6 @@ async def answer(bot, query):
             is_premium = False
         if not is_premium:
             try:
-                # check_verification may be a function that checks if user passed verification
                 verified = await check_verification(bot, user_id)
             except Exception:
                 verified = False
@@ -107,21 +106,22 @@ async def answer(bot, query):
         is_private_inline = chat_type in ('private', 'sender')
 
         if is_private_inline:
-            # In private inline: premium or verified users get direct cached document
+            # 1. PREMIUM USER BLOCK: Directly triggers Cached Document layout delivery channels
             if is_premium or verified:
                 try:
+                    # FIX: Removed the unsupported description parameter from Cached Document format schema
                     results.append(
                         InlineQueryResultCachedDocument(
-                            id=file['file_id'],
+                            id=f"doc-{file['file_id']}",  # Unique string wrapper initialization
                             title=title,
                             document_file_id=file['file_id'],
                             caption=f_caption,
-                            description=f"Size: {size}",
                             reply_markup=reply_markup,
                         )
                     )
-                except Exception:
-                    # fallback to article if something goes wrong
+                except Exception as cache_err:
+                    logger.error(f"Cached Element Failed: {cache_err}")
+                    # Ultimate safe system backup strategy architecture
                     input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
                     btn = InlineKeyboardMarkup(
                         [[InlineKeyboardButton("Open PM", url=f"https://t.me/{temp.U_NAME}")]]
@@ -136,9 +136,8 @@ async def answer(bot, query):
                         )
                     )
             else:
-                # Non-premium + unverified in PM: show verification article with Verify button
+                # 2. NORMAL USER BLOCK: Sends Text Article with verification button redirection setup
                 try:
-                    # get_token integrates with existing verification flow and returns a URL
                     verify_url = await get_token(bot, user_id, f"https://t.me/{temp.U_NAME}?start=")
                 except Exception:
                     verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
@@ -157,7 +156,7 @@ async def answer(bot, query):
                     )
                 )
         else:
-            # Group/supergroup inline: always provide a message (article) that posts in group with a Get File button
+            # Group/supergroup inline framework parameters configuration setup
             pm_link = f"https://t.me/{temp.U_NAME}?start=inline_{file['file_id']}"
             input_content = InputTextMessageContent(
                 f"🎬 {title}\n\n📥 Click below to receive this file in PM."
