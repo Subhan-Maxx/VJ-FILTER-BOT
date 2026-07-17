@@ -3,7 +3,7 @@
 # Ask Doubt on telegram @KingVJ01
 
 import logging
-from pyrogram import Client, emoji, filters
+from pyrogram import Client, emoji, filters, enums
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 from pyrogram.types import (
     InlineKeyboardButton,
@@ -72,7 +72,31 @@ async def answer(bot, query):
         chat_id, string, file_type=file_type, max_results=10, offset=offset
     )
 
-    for file in files:
+    user_id = query.from_user.id if query.from_user else 0
+
+    # Determine user's premium / verification status ONCE (outside loop for efficiency)
+    is_premium = False
+    verified = False
+    try:
+        is_premium = await db.has_premium_access(user_id)
+        logger.info(f"Premium check for user {user_id}: {is_premium}")
+    except Exception as e:
+        logger.exception(f"Error checking premium access for user {user_id}: {e}")
+        is_premium = False
+    
+    if not is_premium:
+        try:
+            verified = await check_verification(bot, user_id)
+            logger.info(f"Verification check for user {user_id}: {verified}")
+        except Exception as e:
+            logger.exception(f"Error checking verification for user {user_id}: {e}")
+            verified = False
+
+    # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
+    chat_type = (query.chat_type.value if query.chat_type else '').lower()
+    is_private_inline = chat_type in ('private', 'sender')
+
+    for idx, file in enumerate(files):
         title = file['file_name']
         size = get_size(file['file_size'])
         f_caption = file.get('caption') or file['file_name']
@@ -83,45 +107,30 @@ async def answer(bot, query):
                     file_size='' if size is None else size,
                     file_caption='' if f_caption is None else f_caption,
                 )
-            except Exception:
+            except Exception as e:
+                logger.exception(f"Error formatting caption: {e}")
                 pass
-
-        user_id = query.from_user.id if query.from_user else 0
-
-        # Determine user's premium / verification status
-        is_premium = False
-        verified = False
-        try:
-            is_premium = await db.has_premium_access(user_id)
-        except Exception:
-            is_premium = False
-        if not is_premium:
-            try:
-                # check_verification may be a function that checks if user passed verification
-                verified = await check_verification(bot, user_id)
-            except Exception:
-                verified = False
-
-        # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
-        chat_type = (query.chat_type.value if query.chat_type else '').lower()
-        is_private_inline = chat_type in ('private', 'sender')
 
         if is_private_inline:
             # In private inline: premium or verified users get direct cached document
             if is_premium or verified:
                 try:
+                    # Use unique ID combining user_id, file_id, and index to ensure uniqueness
+                    unique_id = f"doc_{user_id}_{file['file_id']}_{idx}"
                     results.append(
                         InlineQueryResultCachedDocument(
-                            id=f"cached-{file['file_id']}-{len(results)}",  # Add unique identifier
+                            id=unique_id,
                             title=title,
                             document_file_id=file['file_id'],
                             caption=f_caption,
                             description=f"Size: {size}",
                             reply_markup=reply_markup,
+                            parse_mode=enums.ParseMode.HTML,
                         )
                     )
+                    logger.info(f"✅ Added InlineQueryResultCachedDocument for premium/verified user {user_id}: {unique_id}")
                 except Exception as e:
-                    logger.exception(f"Error creating cached document: {e}")
+                    logger.exception(f"❌ Error creating cached document for user {user_id}: {e}")
                     # fallback to article if something goes wrong
                     input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
                     btn = InlineKeyboardMarkup(
@@ -129,7 +138,7 @@ async def answer(bot, query):
                     )
                     results.append(
                         InlineQueryResultArticle(
-                            id=f"fallback-{file['file_id']}-{len(results)}",
+                            id=f"fallback_{user_id}_{file['file_id']}_{idx}",
                             title=title,
                             input_message_content=input_content,
                             description=f"Size: {size}",
@@ -140,9 +149,9 @@ async def answer(bot, query):
             else:
                 # Non-premium + unverified in PM: show verification article with Verify button
                 try:
-                    # get_token integrates with existing verification flow and returns a URL
                     verify_url = await get_token(bot, user_id, f"https://t.me/{temp.U_NAME}?start=")
-                except Exception:
+                except Exception as e:
+                    logger.exception(f"Error getting verification token: {e}")
                     verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
 
                 input_content = InputTextMessageContent(
@@ -151,7 +160,7 @@ async def answer(bot, query):
                 btn = InlineKeyboardMarkup([[InlineKeyboardButton("Verify", url=verify_url)]])
                 results.append(
                     InlineQueryResultArticle(
-                        id=f"verify-{file['file_id']}",
+                        id=f"verify_{user_id}_{file['file_id']}_{idx}",
                         title=f"{title} — Verify to get file",
                         input_message_content=input_content,
                         description=f"Size: {size}",
@@ -167,7 +176,7 @@ async def answer(bot, query):
             btn = InlineKeyboardMarkup([[InlineKeyboardButton("Get File", url=pm_link)]])
             results.append(
                 InlineQueryResultArticle(
-                    id=f"pm-{file['file_id']}",
+                    id=f"pm_{user_id}_{file['file_id']}_{idx}",
                     title=f"{title} — Get in PM",
                     input_message_content=input_content,
                     description=f"Size: {size}",
