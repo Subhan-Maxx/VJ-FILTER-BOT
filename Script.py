@@ -5,7 +5,14 @@
 class script(object):
     START_TXT = """<b><blockquote>ʜᴇʟʟᴏ {} 👋,</blockquote>
     
-ɪ ᴀᴍ ʟᴀᴛᴇꜱᴛ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀɴᴅ ᴘᴏᴡᴇʀꜰᴜʟ ᴀᴜᴛᴏ ꜰɪʟᴛᴇʀ ʙᴏᴛ. ʏᴏᴜ ᴄᴀɴ ᴜꜱᴇ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴛᴏ ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ...💸</b>"""
+<b>ɪ'ᴍ ᴍᴇᴅɪᴀ sᴇᴀʀᴄʜ ʙᴏᴛ 🤖
+
+ʏᴏᴜ ᴄᴀɴ sᴇᴀʀᴄʜ ғɪʟᴇs ɪɴ ᴛᴡᴏ ᴡᴀʏs:
+
+• sɪᴍᴘʟʏ sᴇɴᴅ ᴛʜᴇ ғɪʟᴇ ɴᴀᴍᴇ ɪɴ ᴛʜɪs ᴄʜᴀᴛ.
+• ᴏʀ ᴜsᴇ ɪɴʟɪɴᴇ ᴍᴏᴅᴇ ᴛᴏ sᴇᴀʀᴄʜ ғɪʟᴇs ᴀɴʏᴡʜᴇʀᴇ.
+
+👇 ᴘʀᴇss ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ɢᴇᴛ sᴛᴀʀᴛᴇᴅ.</b>"""
 
     CLONE_START_TXT = """<b><blockquote>ʜᴇʟʟᴏ {}, ᴍʏ ɴᴀᴍᴇ <a href=https://t.me/{}>{}</a></blockquote>
     
@@ -15,8 +22,28 @@ class script(object):
 ʜᴇʀᴇ ɪs ᴀʟʟ ᴍʏ ᴜsᴇғᴜʟʟ ғᴇᴀᴛᴜʀᴇs.</b>"""
     
     HELP2_TXT = """<b>ʜᴇʟʟᴏ {}
-ʜᴇʀᴇ ɪs ᴀʟʟ ᴍʏ ᴜsᴇғᴜʟʟ ғᴇᴀᴛᴜʀᴇs.</b>"""
+<b>📖 ʜᴏᴡ ᴛᴏ sᴇᴀʀᴄʜ ғɪʟᴇs</b>
 
+🔹 <b>ᴍᴇᴛʜᴏᴅ ① – sᴇᴀʀᴄʜ ɪɴ ʙᴏᴛ</b>
+
+• ᴏᴘᴇɴ ᴛʜᴇ ʙᴏᴛ's ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.
+• sɪᴍᴘʟʏ sᴇɴᴅ ᴛʜᴇ ᴍᴏᴠɪᴇ, sᴇʀɪᴇs, ᴏʀ ғɪʟᴇ ɴᴀᴍᴇ.
+• ᴇxᴀᴍᴘʟᴇ:
+<code>Pushpa 2</code>
+
+🔹 <b>ᴍᴇᴛʜᴏᴅ ② – ɪɴʟɪɴᴇ sᴇᴀʀᴄʜ</b>
+
+• ᴛʏᴘᴇ:
+<code>@-BotUsername Movie Name</code>
+
+• ᴇxᴀᴍᴘʟᴇ:
+<code>@-BotUsername Pushpa 2</code>
+
+• sᴇʟᴇᴄᴛ ᴛʜᴇ ᴅᴇsɪʀᴇᴅ ʀᴇsᴜʟᴛ ᴛᴏ ʀᴇᴄᴇɪᴠᴇ ʏᴏᴜʀ ғɪʟᴇ.
+
+💎 <b>ᴘʀᴇᴍɪᴜᴍ ᴜsᴇʀs</b> ʀᴇᴄᴇɪᴠᴇ ғɪʟᴇs ɪɴsᴛᴀɴᴛʟʏ.
+
+🔒 <b>ғʀᴇᴇ ᴜsᴇʀs</b> ᴍᴀʏ ɴᴇᴇᴅ ᴛᴏ ᴄᴏᴍᴘʟᴇᴛᴇ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ʙᴇғᴏʀᴇ ʀᴇᴄᴇɪᴠɪɴɢ ғɪʟᴇs."""
 
     ABOUT_TXT = """<b><blockquote>⍟───[ ᴍʏ ᴅᴇᴛᴀɪʟꜱ ]───⍟</blockquote>
     
@@ -152,8 +179,15 @@ Cᴏᴍᴍᴀɴᴅs Aɴᴅ Usᴀɢᴇ:
 • /delg - <code>ᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀ sᴘᴇᴄɪғɪᴄ ɢʟᴏʙᴀʟ ғɪʟᴛᴇʀ</code>
 • /request - <code>Tᴏ sᴇɴᴅ ᴀ Mᴏᴠɪᴇ/Sᴇʀɪᴇs ʀᴇᴏ̨ᴜᴇsᴛ ᴛᴏ ʙᴏᴛ ᴀᴅᴍɪɴs. Oɴʟʏ ᴡᴏʀᴋs ᴏɴ sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ. [Tʜɪs Cᴏᴍᴍᴀɴᴅ Cᴀɴ Bᴇ Usᴇᴅ Bʏ Aɴʏᴏɴᴇ]</code>
 • /delallg - <code>Tᴏ ᴅᴇʟᴇᴛᴇ ᴀʟʟ Gғɪʟᴛᴇʀs ғʀᴏᴍ ᴛʜᴇ ʙᴏᴛ's ᴅᴀᴛᴀʙᴀsᴇ.</code>
-• /deletefiles - <code>Tᴏ ᴅᴇʟᴇᴛᴇ CᴀᴍRɪᴘ ᴀɴᴅ PʀᴇDVD Fɪʟᴇs ғʀᴏᴍ ᴛʜᴇ ʙᴏᴛ's ᴅᴀᴛᴀʙᴀsᴇ.</code>"""
-
+• /deletefiles - <code>Tᴏ ᴅᴇʟᴇᴛᴇ CᴀᴍRɪᴘ ᴀɴᴅ PʀᴇDVD Fɪʟᴇs ғʀᴏᴍ ᴛʜᴇ ʙᴏᴛ's ᴅᴀᴛᴀʙᴀsᴇ.</code>
+• /enable - <code>ᴛᴏ ʀᴇ-ᴇɴᴀʙʟᴇ ᴀ ᴅɪsᴀʙʟᴇᴅ ᴄʜᴀᴛ.</code>
+• /deleteall - <code>ᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ғɪʟᴇs ғʀᴏᴍ ᴛʜᴇ ʙᴏᴛ's ᴅᴀᴛᴀʙᴀsᴇ.</code>
+• /add_premium - <code>ᴛᴏ ᴀᴅᴅ ᴀ ᴜsᴇʀ ᴛᴏ ᴛʜᴇ ᴘʀᴇᴍɪᴜᴍ ʟɪsᴛ.</code>
+• /remove_premium - <code>ᴛᴏ ʀᴇᴍᴏᴠᴇ ᴀ ᴜsᴇʀ ғʀᴏᴍ ᴛʜᴇ ᴘʀᴇᴍɪᴜᴍ ʟɪsᴛ.</code>
+• /restart - <code>ᴛᴏ ʀᴇsᴛᴀʀᴛ ᴛʜᴇ ʙᴏᴛ sᴇʀᴠᴇʀ.</code>
+• /purgerequests - <code>ᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀʟʟ ᴊᴏɪɴ ʀᴇǫᴜᴇsᴛs ғʀᴏᴍ ᴛʜᴇ ᴅᴀᴛᴀʙᴀsᴇ.</code>
+• /totalrequests - <code>ᴛᴏ ɢᴇᴛ ᴛʜᴇ ᴛᴏᴛᴀʟ ɴᴜᴍʙᴇʀ ᴏғ ᴊᴏɪɴ ʀᴇǫᴜᴇsᴛs ғʀᴏᴍ ᴛʜᴇ ᴅᴀᴛᴀʙᴀsᴇ.</code>"""
+    
     SEC_STATUS_TXT = """<b>★ Tᴏᴛᴀʟ Usᴇʀs: <code>{}</code>
 ★ Tᴏᴛᴀʟ Cʜᴀᴛs: <code>{}</code>
 ★ Tᴏᴛᴀʟ Fɪʟᴇs: <code>{}</code>
@@ -757,3 +791,4 @@ Example:- /set_caption 📕 File Name: {filename}
 
     
 
+    
