@@ -101,30 +101,29 @@ async def answer(bot, query):
             except Exception:
                 verified = False
 
-        # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
+        # Extracting .value prevents the AttributeError on pyrofork
         chat_type = (query.chat_type.value if query.chat_type else '').lower()
         is_private_inline = chat_type in ('private', 'sender')
 
         if is_private_inline:
-            # 1. PREMIUM USER BLOCK: Directly triggers Cached Document layout delivery channels
+            # 1. PREMIUM / VERIFIED USER BLOCK: Triggers Cached Document (Exactly like your working example bot)
             if is_premium or verified:
                 try:
-                    # FIX: Removed the unsupported description parameter from Cached Document format schema
                     results.append(
                         InlineQueryResultCachedDocument(
-                            id=f"doc-{file['file_id']}",  # Unique string wrapper initialization
                             title=title,
                             document_file_id=file['file_id'],
                             caption=f_caption,
+                            description=f"Size: {size}",
                             reply_markup=reply_markup,
                         )
                     )
                 except Exception as cache_err:
-                    logger.error(f"Cached Element Failed: {cache_err}")
-                    # Ultimate safe system backup strategy architecture
+                    logging.error(f"Cached Element Failed: {cache_err}")
+                    # Ultimate fallback inside try-except tree
                     input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
                     btn = InlineKeyboardMarkup(
-                        [[InlineKeyboardButton("Open PM", url=f"https://t.me/{temp.U_NAME}")]]
+                        [[InlineKeyboardButton("Open PM", url=f"https://t.me{temp.U_NAME}")]]
                     )
                     results.append(
                         InlineQueryResultArticle(
@@ -136,11 +135,11 @@ async def answer(bot, query):
                         )
                     )
             else:
-                # 2. NORMAL USER BLOCK: Sends Text Article with verification button redirection setup
+                # 2. NORMAL USER BLOCK: Verification required (Text article interface)
                 try:
-                    verify_url = await get_token(bot, user_id, f"https://t.me/{temp.U_NAME}?start=")
+                    verify_url = await get_token(bot, user_id, f"https://t.me{temp.U_NAME}?start=")
                 except Exception:
-                    verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
+                    verify_url = f"https://t.me{temp.U_NAME}?start=verify"
 
                 input_content = InputTextMessageContent(
                     f"🔒 Verification required to receive this file:\n\n{title}\n\nClick Verify to continue."
@@ -156,8 +155,8 @@ async def answer(bot, query):
                     )
                 )
         else:
-            # Group/supergroup inline framework parameters configuration setup
-            pm_link = f"https://t.me/{temp.U_NAME}?start=inline_{file['file_id']}"
+            # Group/supergroup inline fallback delivery structure
+            pm_link = f"https://t.me{temp.U_NAME}?start=inline_{file['file_id']}"
             input_content = InputTextMessageContent(
                 f"🎬 {title}\n\n📥 Click below to receive this file in PM."
             )
