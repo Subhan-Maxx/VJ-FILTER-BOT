@@ -102,8 +102,8 @@ async def answer(bot, query):
             except Exception:
                 verified = False
 
-        # If the inline is invoked inside a private chat (PM)
-        chat_type = (query.chat_type or '').lower()
+        # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
+        chat_type = (query.chat_type.value if query.chat_type else '').lower()
         is_private_inline = chat_type in ('private', 'sender')
 
         if is_private_inline:
