@@ -268,7 +268,7 @@ class Database:
         
     async def give_free_trail(self, userid):
         user_id = userid
-        seconds = 7 * 24 * 60 * 60
+        seconds = 5 * 60 #7 * 24 * 60 * 60
         expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
         user_data = {
             "id": user_id,
