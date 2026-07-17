@@ -97,20 +97,22 @@ async def answer(bot, query):
             is_premium = False
         if not is_premium:
             try:
+                # check_verification may be a function that checks if user passed verification
                 verified = await check_verification(bot, user_id)
             except Exception:
                 verified = False
 
-        # Extracting .value prevents the AttributeError on pyrofork
+        # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
         chat_type = (query.chat_type.value if query.chat_type else '').lower()
         is_private_inline = chat_type in ('private', 'sender')
 
         if is_private_inline:
-            # 1. PREMIUM / VERIFIED USER BLOCK: Triggers Cached Document (Exactly like your working example bot)
+            # In private inline: premium or verified users get direct cached document
             if is_premium or verified:
                 try:
                     results.append(
                         InlineQueryResultCachedDocument(
+                            id=file['file_id'],
                             title=title,
                             document_file_id=file['file_id'],
                             caption=f_caption,
@@ -118,12 +120,11 @@ async def answer(bot, query):
                             reply_markup=reply_markup,
                         )
                     )
-                except Exception as cache_err:
-                    logging.error(f"Cached Element Failed: {cache_err}")
-                    # Ultimate fallback inside try-except tree
+                except Exception:
+                    # fallback to article if something goes wrong
                     input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
                     btn = InlineKeyboardMarkup(
-                        [[InlineKeyboardButton("Open PM", url=f"https://t.me{temp.U_NAME}")]]
+                        [[InlineKeyboardButton("Open PM", url=f"https://t.me/{temp.U_NAME}")]]
                     )
                     results.append(
                         InlineQueryResultArticle(
@@ -135,11 +136,12 @@ async def answer(bot, query):
                         )
                     )
             else:
-                # 2. NORMAL USER BLOCK: Verification required (Text article interface)
+                # Non-premium + unverified in PM: show verification article with Verify button
                 try:
-                    verify_url = await get_token(bot, user_id, f"https://t.me{temp.U_NAME}?start=")
+                    # get_token integrates with existing verification flow and returns a URL
+                    verify_url = await get_token(bot, user_id, f"https://t.me/{temp.U_NAME}?start=")
                 except Exception:
-                    verify_url = f"https://t.me{temp.U_NAME}?start=verify"
+                    verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
 
                 input_content = InputTextMessageContent(
                     f"🔒 Verification required to receive this file:\n\n{title}\n\nClick Verify to continue."
@@ -155,8 +157,8 @@ async def answer(bot, query):
                     )
                 )
         else:
-            # Group/supergroup inline fallback delivery structure
-            pm_link = f"https://t.me{temp.U_NAME}?start=inline_{file['file_id']}"
+            # Group/supergroup inline: always provide a message (article) that posts in group with a Get File button
+            pm_link = f"https://t.me/{temp.U_NAME}?start=inline_{file['file_id']}"
             input_content = InputTextMessageContent(
                 f"🎬 {title}\n\n📥 Click below to receive this file in PM."
             )
