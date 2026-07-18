@@ -6,6 +6,7 @@ import os, logging, string, asyncio, time, re, ast, random, math, pytz, pyrogram
 from datetime import datetime, timedelta, date, time
 from Script import script
 from info import *
+from info import BACKUP_BOT, ADMINS as BOT_ADMINS
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ChatPermissions, WebAppInfo
 from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
@@ -1910,6 +1911,11 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     
     elif query.data == "help":
+        userid = query.from_user.id
+        if user_id not in BOT_ADMINS:
+            await query.answer("⚠️ ᴏɴʟʏ ғᴏʀ ʙᴏᴛ ᴀᴅᴍɪɴs", show_alert=True)
+            return
+            
         buttons = [[
              InlineKeyboardButton('⚙️ ᴀᴅᴍɪɴ ᴏɴʟʏ 🔧', callback_data='admin'),
          ], [ 
@@ -1931,7 +1937,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
              InlineKeyboardButton('ꜱᴛɪᴄᴋᴇʀ-ɪᴅ', callback_data='sticker'),
              InlineKeyboardButton('ᴊ-ꜱᴏɴ', callback_data='json')
          ], [             
-             InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start')
+             InlineKeyboardButton('⇚ ʙᴀᴄᴋ', callback_data='help_b'),
+             InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await client.edit_message_media(
@@ -1948,8 +1955,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
         
     elif query.data == "help_b":
         buttons = [[
-             InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about'),
-             InlineKeyboardButton('ᴀᴅᴍɪɴ', callback_data='help'),
+             InlineKeyboardButton('👤 ᴀʙᴏᴜᴛ', callback_data='about'),
+             InlineKeyboardButton('⚙️ ᴀᴅᴍɪɴs ᴍᴏᴅᴜʟᴇ', callback_data='help'),
+         ], [              
+             InlineKeyboardButton('ʙᴀᴄᴋᴜᴘ ʙᴏᴛ', url=f"https://t.me/{BACKUP_BOT}"),    
          ], [              
              InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start'),
              InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
@@ -2062,8 +2071,12 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "admin":
         buttons = [[
-            InlineKeyboardButton('⟸ Bᴀᴄᴋ', callback_data='help_b'),
             InlineKeyboardButton('ᴇxᴛʀᴀ', callback_data='extra')
+         ],[            
+            InlineKeyboardButton('⟸ ʙᴀᴄᴋ', callback_data='help_b'),
+            InlineKeyboardButton('ɴᴇxᴛ ➠', callback_data='admin_b')
+         ],[            
+            InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
         ]]
         await client.edit_message_media(
             query.message.chat.id, 
@@ -2076,6 +2089,23 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
+        
+    elif query.data == "admin_b":
+        buttons = [[
+            InlineKeyboardButton('⟸ Bᴀᴄᴋ', callback_data='admin'),
+            InlineKeyboardButton('ᴄʟᴏsᴇ', callback_data='close_data')
+        ]]
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.ADMIN2_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )        
     
     elif query.data == "store_file":
         buttons = [[
@@ -3304,3 +3334,4 @@ async def global_filters(client, message, text=False):
     else:
         return False
 
+    
