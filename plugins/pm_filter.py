@@ -1911,7 +1911,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     
     elif query.data == "help":
-        userid = query.from_user.id
+        user_id = query.from_user.id
         if user_id not in BOT_ADMINS:
             await query.answer("⚠️ ᴏɴʟʏ ғᴏʀ ʙᴏᴛ ᴀᴅᴍɪɴs", show_alert=True)
             return
