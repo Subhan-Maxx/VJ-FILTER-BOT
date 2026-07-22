@@ -144,13 +144,13 @@ async def answer(bot, query):
                     verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
 
                 input_content = InputTextMessageContent(
-                    f"ðŸ”’ Verification required to receive this file:\n\n{title}\n\nClick Verify to continue."
+                    f"Verification required to receive this file:\n\n{title}\n\nClick Verify to continue."
                 )
                 btn = InlineKeyboardMarkup([[InlineKeyboardButton("Verify", url=verify_url)]])
                 results.append(
                     InlineQueryResultArticle(
                         id=f"verify-{file['file_id']}",
-                        title=f"{f_caption} â€” Verify to get file",
+                        title=f"{f_caption} ” Verify to get file",
                         input_message_content=input_content,
                         description=f"Size: {size}",
                         reply_markup=btn,
@@ -160,7 +160,8 @@ async def answer(bot, query):
             # Group/supergroup inline: always provide a message (article) that posts in group with a Get File button
             pm_link = f"https://t.me/{temp.U_NAME}?start=inline_{file['file_id']}"
             input_content = InputTextMessageContent(
-                f"ðŸŽ¬ {title}\n\nðŸ“¥ Click below to receive this file in PM."
+                f"{f_caption}\n\n Click below to receive this file in PM.\n#INLINE_RESULT"
+                
             )
             btn = InlineKeyboardMarkup([[InlineKeyboardButton("Get File", url=pm_link)]])
             results.append(
