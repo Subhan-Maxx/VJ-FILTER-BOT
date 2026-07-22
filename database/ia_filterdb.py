@@ -29,7 +29,7 @@ async def save_file(media):
     file_name = clean_file_name(media.file_name)
     new_file_name = f"{file_name}"
     
-    raw_text = media.caption.html if media.caption else media.file_name
+    raw_text = str(media.caption) if media.caption else str(media.file_name)
     clean_caption = generate_clean_video_title(raw_text)
     if not clean_caption:
         clean_caption = clean_file_name(media.file_name)
