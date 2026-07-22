@@ -2,6 +2,8 @@
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
 
+
+from helper.clean_caption import generate_clean_video_title
 import re, base64, json
 from struct import pack
 from pyrogram.file_id import FileId
@@ -25,15 +27,20 @@ async def save_file(media):
     
     file_id = unpack_new_file_id(media.file_id)
     file_name = clean_file_name(media.file_name)
-    new_file_name = f"@VJ_Bots {file_name}"
+    new_file_name = f"{file_name}"
     
-    file = {
-        'file_id': file_id,
-        'file_name': new_file_name,
-        'file_size': media.file_size,
-        'caption': media.caption.html if media.caption else None
-    }
+    raw_text = media.caption.html if media.caption else media.file_name
+    clean_caption = generate_clean_video_title(raw_text)
+    if not clean_caption:
+        clean_caption = clean_file_name(media.file_name)
 
+    file = {
+        "file_id": file_id,
+        "file_name": new_file_name,      # original filename
+        "file_size": media.file_size,
+        "caption": clean_caption      
+    }
+    
     if is_file_already_saved(file_id, file_name):
         return False, 0
 
@@ -99,7 +106,7 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
     except:
         regex = query
-    filter = {'file_name': regex}
+    filter = {'caption': regex}
     files = []
     if MULTIPLE_DATABASE:
         cursor1 = col.find(filter).sort('$natural', -1).skip(offset).limit(max_results)
@@ -182,4 +189,3 @@ def unpack_new_file_id(new_file_id):
     )
     return file_id
     
-
