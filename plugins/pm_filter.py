@@ -75,6 +75,8 @@ async def give_filter(client, message):
 
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_text(bot, message):
+    if message.text and "#INLINE_RESULT" in message.text:
+            return
     content = message.text
     user = message.from_user.first_name
     user_id = message.from_user.id
