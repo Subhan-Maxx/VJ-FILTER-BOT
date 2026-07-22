@@ -167,7 +167,7 @@ async def answer(bot, query):
             results.append(
                 InlineQueryResultArticle(
                     id=f"pm-{file['file_id']}",
-                    title=f"{f_caption} â€” Get in PM",
+                    title=f"{f_caption}” Get in PM",
                     input_message_content=input_content,
                     description=f"Size: {size}",
                     reply_markup=btn,
