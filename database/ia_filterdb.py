@@ -105,17 +105,18 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
     # Remove extra spaces
     query = re.sub(r"\s+", " ", query).strip()
     
-    if not query:
-        regex = re.compile(".", re.IGNORECASE)
-    else:
-        words = query.split()
-        pattern = r""
-        for word in words:
-            pattern += rf"(?=.*{re.escape(word)})"
-        pattern += r".*"
-        regex = re.compile(pattern, re.IGNORECASE)        
-    except:
-        regex = query
+    try:
+        if not query:
+            regex = re.compile(".", re.IGNORECASE)
+        else:
+            words = query.split()
+            pattern = ""
+            for word in words:
+                pattern += rf"(?=.*{re.escape(word)})"
+            pattern += ".*"
+            regex = re.compile(pattern, re.IGNORECASE)
+    except Exception:
+        regex = re.compile(re.escape(query), re.IGNORECASE) 
     filter = {'caption': regex}
     files = []
     if MULTIPLE_DATABASE:
