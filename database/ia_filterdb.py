@@ -96,14 +96,24 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
     """For given query return (results, next_offset)"""
     
     query = query.strip()
+    # Remove brackets
+    query = re.sub(r"[\[\](){}]", " ", query)
+    # Normalize season/episode formats
+    query = re.sub(r"\bSS(\d+)\b", r"S\1", query, flags=re.I)
+    # Keep S01E05 together
+    query = re.sub(r"\b(S\d{1,2}E\d{1,2})\b", r" \1 ", query, flags=re.I)
+    # Remove extra spaces
+    query = re.sub(r"\s+", " ", query).strip()
+    
     if not query:
-        raw_pattern = '.'
-    elif ' ' not in query:
-        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
+        regex = re.compile(".", re.IGNORECASE)
     else:
-        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]') 
-    try:
-        regex = re.compile(raw_pattern, flags=re.IGNORECASE)
+        words = query.split()
+        pattern = r""
+        for word in words:
+            pattern += rf"(?=.*{re.escape(word)})"
+        pattern += r".*"
+        regex = re.compile(pattern, re.IGNORECASE)        
     except:
         regex = query
     filter = {'caption': regex}
