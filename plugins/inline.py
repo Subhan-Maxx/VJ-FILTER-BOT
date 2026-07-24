@@ -8,14 +8,12 @@ from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    InlineQueryResultCachedDocument,
     InlineQuery,
     InlineQueryResultArticle,
     InputTextMessageContent,
 )
 from database.ia_filterdb import get_search_results
-from database.users_chats_db import db
-from utils import is_subscribed, get_size, temp, check_verification, get_token
+from utils import is_subscribed, get_size, temp
 from info import CACHE_TIME, AUTH_USERS, AUTH_CHANNEL, CUSTOM_FILE_CAPTION
 from database.connections_mdb import active_connection
 
@@ -88,86 +86,36 @@ async def answer(bot, query):
 
         user_id = query.from_user.id if query.from_user else 0
 
-        # Determine user's premium / verification status
-        is_premium = False
-        verified = False
-        try:
-            is_premium = await db.has_premium_access(user_id)
-        except Exception:
-            is_premium = False
-        if not is_premium:
-            try:
-                # check_verification may be a function that checks if user passed verification
-                verified = await check_verification(bot, user_id)
-            except Exception:
-                verified = False
-
         # FIX: query.chat_type returns a ChatType enum object. Extracting .value prevents the AttributeError.
         chat_type = (query.chat_type.value if query.chat_type else '').lower()
         is_private_inline = chat_type in ('private', 'sender')
-
+        
+        # FIX: Added the missing if condition and fixed the indentation
         if is_private_inline:
-            # In private inline: premium or verified users get direct cached document
-            if is_premium or verified:
-                try:
-                    results.append(
-                        InlineQueryResultCachedDocument(
-                            id=file['file_id'],
-                            title=title,
-                            document_file_id=file['file_id'],
-                            caption=f_caption,
-                            description=f"Size: {size}",
-                            reply_markup=reply_markup,
-                        )
-                    )
-                except Exception:
-                    # fallback to article if something goes wrong
-                    input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
-                    btn = InlineKeyboardMarkup(
-                        [[InlineKeyboardButton("Open PM", url=f"https://t.me/{temp.U_NAME}")]]
-                    )
-                    results.append(
-                        InlineQueryResultArticle(
-                            id=f"fallback-{file['file_id']}",
-                            title=f_caption,
-                            input_message_content=input_content,
-                            description=f"Size: {size}",
-                            reply_markup=btn,
-                        )
-                    )
-            else:
-                # Non-premium + unverified in PM: show verification article with Verify button
-                try:
-                    # get_token integrates with existing verification flow and returns a URL
-                    verify_url = await get_token(bot, user_id, f"https://t.me/{temp.U_NAME}?start=")
-                except Exception:
-                    verify_url = f"https://t.me/{temp.U_NAME}?start=verify"
-
-                input_content = InputTextMessageContent(
-                    f"Verification required to receive this file:\n\n{title}\n\nClick Verify to continue."
+            input_content = InputTextMessageContent(f"{title}\n\nSize: {size}")
+            btn = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Open PM", url=f"https://t.me/{temp.U_NAME}")]]
+            )
+            results.append(
+                InlineQueryResultArticle(
+                    id=f"fallback-{file['file_id']}",
+                    title=f_caption,
+                    input_message_content=input_content,
+                    description=f"Size: {size}",
+                    reply_markup=btn,
                 )
-                btn = InlineKeyboardMarkup([[InlineKeyboardButton("Verify", url=verify_url)]])
-                results.append(
-                    InlineQueryResultArticle(
-                        id=f"verify-{file['file_id']}",
-                        title=f"{f_caption} ” Verify to get file",
-                        input_message_content=input_content,
-                        description=f"Size: {size}",
-                        reply_markup=btn,
-                    )
-                )
+            )
         else:
             # Group/supergroup inline: always provide a message (article) that posts in group with a Get File button
             pm_link = f"https://t.me/{temp.U_NAME}?start=inline_{file['file_id']}"
             input_content = InputTextMessageContent(
                 f"{f_caption}\n\n Click below to receive this file in PM.\n#INLINE_RESULT"
-                
             )
             btn = InlineKeyboardMarkup([[InlineKeyboardButton("Get File", url=pm_link)]])
             results.append(
                 InlineQueryResultArticle(
                     id=f"pm-{file['file_id']}",
-                    title=f"{f_caption}” Get in PM",
+                    title=f"{f_caption} Get in PM",
                     input_message_content=input_content,
                     description=f"Size: {size}",
                     reply_markup=btn,
